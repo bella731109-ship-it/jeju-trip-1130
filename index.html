@@ -308,6 +308,11 @@
                     <span class="w-5 h-5 rounded-full bg-[#03C75A] text-white grid place-items-center" v-html="icon('food','w-3 h-3')"></span>
                     搜尋{{ regionOf(item).zh }}附近 맛집
                   </button>
+                  <button v-if="item.cat === '美食'" @click.stop="openCatchtable(item)"
+                          class="mt-2.5 inline-flex items-center gap-1.5 pl-2 pr-3 py-1.5 rounded-full bg-[#FBE9E5] text-[#D0705E] text-[12px] font-bold press">
+                    <span class="w-5 h-5 rounded-full bg-[#E2614E] text-white grid place-items-center font-maru text-[10px] font-bold">C</span>
+                    CATCHTABLE 訂位
+                  </button>
                 </div>
                 <div class="flex flex-col items-center justify-between py-3 pr-3 gap-2">
                   <button @click.stop="editItem(item)" class="w-8 h-8 rounded-full bg-cream text-sub grid place-items-center press" v-html="icon('edit','w-4 h-4')"></button>
@@ -1139,6 +1144,17 @@ createApp({
     function openMatjip(region) {
       openNaver(`${region.ko} 맛집`);
     }
+    /* CATCHTABLE 國際版：先複製韓文店名，再開 App（未安裝則到商店下載） */
+    async function openCatchtable(item) {
+      const name = (item.query || item.name).trim();
+      try { await navigator.clipboard.writeText(name); showToast(`已複製「${name}」，到 CATCHTABLE 貼上搜尋`); }
+      catch (e) { showToast(`在 CATCHTABLE 搜尋：${name}`); }
+      const ua = navigator.userAgent;
+      const url = /Android/i.test(ua)
+        ? 'https://play.google.com/store/search?q=CATCH%20TABLE%20Global&c=apps'
+        : 'https://apps.apple.com/app/id1639046576';
+      setTimeout(() => window.open(url, '_blank'), 900);
+    }
     const locating = ref(false);
     function nearbyMatjip() {
       if (!navigator.geolocation) { openNaver('맛집'); return; }
@@ -1418,7 +1434,7 @@ createApp({
       tabs, tab, switchTab,
       curDate, selectDate, weekday, dayNum, md, fmtFull, nights, hotelTonight,
       catFilter, visibleItems, hasHours, flightOf, segments, cycleMode, listEl,
-      openNaver, curWeather, outfit, regionOf, openMatjip, nearbyMatjip, locating,
+      openNaver, curWeather, outfit, regionOf, openMatjip, nearbyMatjip, locating, openCatchtable,
       fx, fxUnit, fxResult, fxQuick, krwToTwd,
       shopping, expenses, info, totalKRW, sumBy, catSum, expenseGroups,
       sheet, form, sheetTitle, confirmDelete, openSheet, closeSheet, editItem, onFab,
